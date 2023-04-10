@@ -1,0 +1,72 @@
+# Synthesis script for yosys created by qflow
+read_liberty -lib -ignore_miss_dir -setattr blackbox /usr/local/share/qflow/tech/osu035/osu035_stdcells.lib
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/system_top.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/bit_synchronizer.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/reset_synchronizer.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/data_synchronizer.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/clk_gate.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/clk_divider.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/uart_top.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/alu.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/reg_file.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/sys_control.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/sys_control_tx.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/sys_control_rx.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/uart_rx.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/uart_tx.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/mux.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/serializer.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/parity_calc.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/uart_tx_fsm.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/stp_check.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/strt_check.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/parity_check.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/deserializer.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/edge_bit_counter.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/data_sampling.v
+read_verilog  /home/amustafa/qflow_training/multi_clock_digital_system/src/uart_rx_fsm.v
+
+select alu
+write_cxxrtl alu.cpp
+
+# copy system_top system_top_gold
+# hierarchy -top system_top
+
+# # High-level synthesis
+# # synth -top system_top
+# proc ;; fsm;; memory;; wreduce;;
+
+# techmap;;
+
+# # cd system_top
+# # show -width -signed -pause
+# # cd ..
+
+# cd ..
+# #flipflops mapping
+# check -assert
+# dfflibmap -liberty /usr/local/share/qflow/tech/osu035/osu035_stdcells.lib
+# opt
+
+# # Map combinatorial cells, standard script
+# abc -exe /usr/local/share/qflow/bin/yosys-abc -liberty /usr/local/share/qflow/tech/osu035/osu035_stdcells.lib -script +strash;scorr;ifraig;retime,{D};strash;dch,-f;map,-M,1,{D}
+
+# flatten
+# setundef -zero
+
+# clean -purge
+# # Output buffering
+# iopadmap -outpad BUFX2 A:Y -bits
+# # Cleanup
+# opt
+# clean
+# rename -enumerate
+# write_blif synth/system_top_netlist.blif
+# stat
+
+# copy system_top system_top_gold
+# equiv_make system_top_gold system_top top_equiv_2
+# cd top_equiv_2
+# equiv_simple
+# equiv_status -assert
+# cd ..
